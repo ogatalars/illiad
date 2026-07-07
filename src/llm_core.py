@@ -289,6 +289,12 @@ def _set_cached_response(cache_key: str, response: str) -> None:
 # ── Anthropic native API adapter ──
 
 ANTHROPIC_MODELS = [
+    "claude-fable-5",
+    "claude-opus-4-8", "claude-opus-4-7", "claude-opus-4-6",
+    "claude-opus-4-5-20251101", "claude-opus-4-5",
+    "claude-sonnet-4-6",
+    "claude-haiku-4-5-20251001", "claude-haiku-4-5",
+    "claude-opus-4-1-20250805", "claude-opus-4-1",
     "claude-opus-4-20250514", "claude-opus-4",
     "claude-sonnet-4-20250514", "claude-sonnet-4", "claude-sonnet-4-5-20250929", "claude-sonnet-4-5",
     "claude-haiku-4-20250514", "claude-haiku-4", "claude-haiku-3-5-20241022", "claude-haiku-3-5",
