@@ -1,76 +1,78 @@
-<p align="center">
-  <img src="docs/odysseus-wordmark.png" alt="Odysseus" width="238">
-</p>
+# Illiad
 
-<p align="center">
-  A self-hosted AI workspace for chat, agents, research, documents, email, notes, calendar, and local model workflows.
-</p>
+A native-window desktop build of [Odysseus](https://github.com/pewdiepie-archdaemon/odysseus) —
+a self-hosted AI workspace. Illiad runs the same app in its **own window**
+(not a browser tab), with **no Docker** and **no installer**: you run one
+command and the app opens.
 
-<p align="center">
-  <a href="#quick-start">Quick Start</a> ·
-  <a href="docs/setup.md">Setup Guide</a> ·
-  <a href="CONTRIBUTING.md">Contributing</a> ·
-  <a href="ROADMAP.md">Roadmap</a>
-</p>
+> Companion to Odysseus (the *Odyssey*); this is the *Iliad*.
 
-<p align="center">
-  <a href="https://repology.org/project/odysseus-ai/versions"><img src="https://repology.org/badge/vertical-allrepos/odysseus-ai.svg" alt="Packaging status"></a>
-</p>
+## What's different from Odysseus
 
-<p align="center">
-  <img src="docs/odysseus-browser.jpg" alt="Odysseus interface">
-</p>
+- Opens in a **native window** (pywebview) instead of your browser.
+- **No containers**: ChromaDB runs in-process; no SearXNG/ntfy services.
+- Web search works out of the box via **DuckDuckGo** (no API key needed).
+- Configure model/agent API keys in **Settings**, or in a `.env` file.
 
----
+## Install & run
 
-## Quick Start
-
-> `dev` is the default branch and gets the newest changes first. Use [`main`](https://github.com/pewdiepie-archdaemon/odysseus/tree/main) if you want the more curated branch.
+You need [**uv**](https://docs.astral.sh/uv/) (installs Python + dependencies
+for you — one command, listed on the uv site).
 
 ```bash
-git clone https://github.com/pewdiepie-archdaemon/odysseus.git
-cd odysseus
-cp .env.example .env
-docker compose up -d --build
+git clone https://github.com/ogatalars/illiad.git
+cd illiad
+uv run illiad_launcher.py
 ```
 
-Open `http://localhost:7000` when the containers are healthy. The first admin password is printed in `docker compose logs odysseus`.
+That's it. `uv` creates an isolated environment, installs everything, launches
+the backend, and opens the window.
 
-Native installs, GPU notes, Windows/macOS instructions, HTTPS, and configuration live in the [setup guide](docs/setup.md).
+### Linux: one extra system package
 
-## Features
+pywebview needs the system **WebKitGTK** runtime (it is not a pip package).
+Install it once for your distro, e.g. on Debian/Ubuntu:
 
-- **Chat + Agents** — local/API models, tools, MCP, files, shell, skills, and memory.
-- **Cookbook** — hardware-aware model recommendations, downloads, and serving.
-- **Deep Research** — multi-step web research with source reading and report generation.
-- **Compare** — blind side-by-side model testing and synthesis.
-- **Documents** — writing-first editor with AI edits, suggestions, Markdown, HTML, CSV, and syntax highlighting.
-- **Email** — IMAP/SMTP inbox with triage, tags, summaries, reminders, and reply drafts.
-- **Notes, Tasks + Calendar** — reminders, todos, scheduled agent tasks, and CalDAV sync.
-- **Extras** — gallery/image editor, themes, uploads, web search, presets, sessions, and 2FA.
+```bash
+sudo apt install gir1.2-webkit2-4.1 libgirepository1.0-dev
+```
 
-## Demo
+Fedora: `sudo dnf install webkit2gtk4.1`. Arch: `sudo pacman -S webkit2gtk-4.1`.
 
-A full hover-to-play tour lives on the landing page: [`docs/index.html`](docs/index.html).
+> Prefer no system dependency? Set `ILLIAD_WEBVIEW_GUI=qt` and install PySide6
+> (`uv pip install pyside6`) to use the Qt webview instead — heavier, but
+> self-contained.
 
-## Contributing
+macOS and Windows need nothing extra — the webview ships with the OS.
 
-Help is welcome. The best entry points are fresh-install testing, provider setup bugs, mobile/editor polish, docs, and small focused refactors. See [CONTRIBUTING.md](CONTRIBUTING.md) and [ROADMAP.md](ROADMAP.md).
+## How it behaves
 
-## Security
+- The terminal you launched from **is** the app process and shows its log.
+  **Keep that window open** while you use Illiad.
+- **Closing the app window quits everything** — backend included. No tray icon,
+  no background process left running.
+- Your data (SQLite, caches, vector store) lives in a per-user folder and
+  persists across runs. Override it with `ODYSSEUS_DATA_DIR`.
 
-Odysseus is a self-hosted workspace with powerful local tools. Keep auth enabled, keep private data out of Git, and do not expose raw model/service ports publicly. Deployment details are in the [setup guide](docs/setup.md#security-notes).
+## Configuration
 
-## Star History
+Everything has a default, so the app runs with no config. To customize, copy
+`.env.example` to `.env` and edit. Common cases:
 
-<a href="https://www.star-history.com/?repos=pewdiepie-archdaemon%2Fodysseus&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=pewdiepie-archdaemon/odysseus&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=pewdiepie-archdaemon/odysseus&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=pewdiepie-archdaemon/odysseus&type=date&legend=top-left" />
- </picture>
-</a>
+- **Use a hosted model**: set `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` (or set
+  the key in Settings inside the app).
+- **Use a local model**: run [Ollama](https://ollama.com) and set
+  `OLLAMA_BASE_URL` — no key needed.
+- **Better web search**: add a provider key (Brave/Tavily/Serper/Google PSE)
+  in `.env` or under Settings → Search. DuckDuckGo is the keyless default.
 
 ## License
 
-AGPL-3.0-or-later -- see [LICENSE](LICENSE) and [ACKNOWLEDGMENTS.md](ACKNOWLEDGMENTS.md).
+Illiad is a derivative of Odysseus and is distributed under **AGPL-3.0-or-later**.
+If you distribute a modified version, you must publish your source under the
+same license. See `LICENSE` and `ACKNOWLEDGMENTS.md`.
+
+## Design
+
+See [`docs/SDD-illiad-desktop.md`](docs/SDD-illiad-desktop.md) for the full
+design document (architecture, decisions, and what was intentionally left out).

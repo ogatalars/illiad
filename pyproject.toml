@@ -1,11 +1,58 @@
+[project]
+name = "illiad"
+version = "0.1.0"
+description = "Illiad — Odysseus as a native desktop app (run-from-source, no Docker, no installer)."
+requires-python = ">=3.10,<3.13"
+license = { text = "AGPL-3.0-or-later" }
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "python-multipart",
+    "python-dotenv",
+    "httpx",
+    "httpcore>=1.0,<2.0",
+    "pydantic>=2.13.4",
+    "pydantic-settings>=2.14.1",
+    "SQLAlchemy",
+    "pypdf",
+    "beautifulsoup4",
+    "charset-normalizer",
+    "numpy",
+    # Vector store for RAG / semantic memory. Full package (not the -client
+    # variant) so it can run in-process via chromadb.PersistentClient.
+    "chromadb",
+    "fastembed",
+    "youtube-transcript-api",
+    "markdown",
+    "nh3",
+    "icalendar",
+    "python-dateutil",
+    "caldav",
+    "cryptography",
+    "bcrypt",
+    "mcp",
+    "pyotp",
+    "qrcode[pil]",
+    "croniter",
+    "httpx2",
+    # --- Illiad desktop additions ---
+    "pywebview",     # native window around the existing web UI
+    "platformdirs",  # per-user data directory resolution
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-asyncio"]
+
+# The app uses a flat module layout (app.py, src/, core/, routes/, services/
+# at the repo root) rather than a build-able package. Tell uv not to try to
+# build/install the project itself — just create the environment from the
+# dependencies above. Run with:  uv run illiad_launcher.py
+[tool.uv]
+package = false
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
-# Test-taxonomy markers added at collection time by tests/conftest.py. The
-# stable area_* markers are declared here; the dynamic sub_<filename-token>
-# markers are registered before collection by pytest_configure in
-# tests/conftest.py, so unknown-mark warnings still flag genuine typos outside
-# the taxonomy. See tests/_taxonomy.py and tests/README.md.
 markers = [
     "area_security: tests covering auth, owner-scope, SSRF, XSS, confinement, redaction",
     "area_routes: tests covering HTTP route / API behavior",
@@ -15,8 +62,5 @@ markers = [
     "area_helpers: self-tests for the shared test helpers in tests/helpers/",
     "area_unit: pure parser / utility tests that do not clearly belong elsewhere",
     "area_uncategorized: tests not yet matched by the taxonomy (fallback)",
-    # Fast-lane marker (issue #3443). Opt-in and orthogonal to the area_*/sub_*
-    # taxonomy. The fast lane runs `not slow`; mark a test slow only with
-    # duration evidence (see tests/run_focus.py --durations and tests/README.md).
     "slow: opt-in marker for known-slow tests; excluded by the fast lane (not slow)",
 ]
