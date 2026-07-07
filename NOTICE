@@ -1,0 +1,35 @@
+Illiad
+======
+
+Illiad is a derivative work of Odysseus
+(https://github.com/pewdiepie-archdaemon/odysseus), a self-hosted AI workspace.
+
+Odysseus is licensed under the GNU Affero General Public License v3.0 or later
+(AGPL-3.0-or-later). Illiad is distributed under the same license. See LICENSE
+for the full text and ACKNOWLEDGMENTS.md for upstream and third-party credits.
+
+Modifications made by Illiad (2026)
+-----------------------------------
+
+Illiad repackages Odysseus as a run-from-source native desktop application. It
+does not fork the product direction; the changes are a small, surgical overlay:
+
+- Added illiad_launcher.py: a desktop entrypoint that runs the FastAPI backend
+  on a loopback daemon thread and opens a native pywebview window (no browser,
+  no tray). Includes automatic port fallback when the default port is busy.
+- Removed the previous launcher.py (browser + system-tray launcher) and its
+  test.
+- src/chroma_client.py: added an in-process "embedded" ChromaDB mode
+  (PersistentClient under the per-user data dir) as the default; the original
+  "http" mode is preserved for server deployments.
+- Changed the default web-search provider from SearXNG to DuckDuckGo so search
+  works with no API key and no external service (src/settings.py,
+  services/search/core.py, src/deep_research.py).
+- Service health reporting adjusted so removed services (SearXNG, ntfy) report
+  as disabled rather than failed in the desktop configuration
+  (src/service_health.py).
+- pyproject.toml, .env.example, README.md, and docs/ updated for the desktop
+  run-from-source model (no Docker, no installer).
+
+The AGPL requires that if you distribute a modified version, you make the
+corresponding source available under the same license.

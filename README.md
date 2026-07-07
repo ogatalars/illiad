@@ -28,6 +28,12 @@ uv run illiad_launcher.py
 That's it. `uv` creates an isolated environment, installs everything, launches
 the backend, and opens the window.
 
+> **First launch is slower.** On the first run Illiad downloads a small local
+> embedding model (for the in-process vector store), so it needs an internet
+> connection once and the window may take ~30–60s to appear. Watch the terminal
+> for progress — the window opens as soon as the backend is ready. Later runs
+> start fast and work offline.
+
 ### Linux: one extra system package
 
 pywebview needs the system **WebKitGTK** runtime (it is not a pip package).
@@ -59,8 +65,11 @@ macOS and Windows need nothing extra — the webview ships with the OS.
 Everything has a default, so the app runs with no config. To customize, copy
 `.env.example` to `.env` and edit. Common cases:
 
-- **Use a hosted model**: set `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` (or set
-  the key in Settings inside the app).
+- **Use a hosted model**: the app talks to any **OpenAI-compatible endpoint**.
+  For OpenAI itself, set `OPENAI_API_KEY` in `.env`. For other providers
+  (Anthropic, gateways, etc.), open **Settings** inside the app and set the
+  model endpoint + key there — keys entered in Settings are stored **encrypted**
+  under your data dir (`api_keys.json`) and persist across runs.
 - **Use a local model**: run [Ollama](https://ollama.com) and set
   `OLLAMA_BASE_URL` — no key needed.
 - **Better web search**: add a provider key (Brave/Tavily/Serper/Google PSE)
@@ -70,7 +79,8 @@ Everything has a default, so the app runs with no config. To customize, copy
 
 Illiad is a derivative of Odysseus and is distributed under **AGPL-3.0-or-later**.
 If you distribute a modified version, you must publish your source under the
-same license. See `LICENSE` and `ACKNOWLEDGMENTS.md`.
+same license. See `LICENSE`, `NOTICE` (what Illiad changed), and
+`ACKNOWLEDGMENTS.md`.
 
 ## Design
 
