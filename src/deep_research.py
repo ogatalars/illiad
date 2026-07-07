@@ -568,7 +568,7 @@ class DeepResearcher:
             if not provider:
                 provider = (settings.get("research_search_provider") or "").strip()
             if not provider:
-                provider = settings.get("search_provider", "searxng")
+                provider = settings.get("search_provider", "duckduckgo")
 
             if provider == "disabled":
                 logger.info("Search is disabled for research")

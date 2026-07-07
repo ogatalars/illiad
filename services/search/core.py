@@ -44,8 +44,10 @@ from .content import (
 logger = logging.getLogger(__name__)
 
 # ========= CONFIG =========
+DEFAULT_SEARCH_PROVIDER = "duckduckgo"
+
 SEARCH_CONFIG: Dict[str, Any] = {
-    "primary_provider": "searxng",
+    "primary_provider": DEFAULT_SEARCH_PROVIDER,
 }
 
 
@@ -63,7 +65,7 @@ def get_search_config() -> Dict[str, Any]:
     """
     config = SEARCH_CONFIG.copy()
     settings = _get_search_settings()
-    provider = settings.get("search_provider", "searxng")
+    provider = settings.get("search_provider", DEFAULT_SEARCH_PROVIDER)
     config["active_provider"] = provider
     config["has_api_key"] = bool(_get_provider_key(provider))
     config["result_count"] = _get_result_count()
@@ -136,7 +138,7 @@ def _build_provider_chain(primary: str) -> List[str]:
 def searxng_search_results(query: str, count: int = 10, time_filter: str = None) -> list[dict]:
     """Perform a web search using configured provider with caching and retry."""
     settings = _get_search_settings()
-    search_provider = settings.get("search_provider", "searxng")
+    search_provider = settings.get("search_provider", DEFAULT_SEARCH_PROVIDER)
     result_count = _get_result_count()
     # Use configured count if caller used default
     if count == 10:
@@ -265,7 +267,7 @@ def comprehensive_web_search(
         logger.info(f"Applying time filter: {time_filter}")
 
     settings = _get_search_settings()
-    search_provider = settings.get("search_provider", "searxng")
+    search_provider = settings.get("search_provider", DEFAULT_SEARCH_PROVIDER)
     result_count = _get_result_count()
 
     if search_provider == "disabled":
