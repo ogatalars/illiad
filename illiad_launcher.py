@@ -99,7 +99,33 @@ def _run_backend(host: str, port: int) -> None:
     uvicorn.run(app, host=host, port=port, log_level="info")
 
 
+def _reset_auth() -> None:
+    try:
+        from dotenv import load_dotenv
+        load_dotenv(encoding="utf-8-sig")
+    except Exception:
+        pass
+    data_dir = os.getenv("ODYSSEUS_DATA_DIR")
+    if not data_dir:
+        try:
+            from platformdirs import user_data_dir
+            data_dir = user_data_dir("illiad")
+        except Exception:
+            data_dir = os.path.join(os.path.expanduser("~"), ".illiad", "data")
+    auth_file = os.path.join(data_dir, "auth.json")
+    if os.path.exists(auth_file):
+        os.remove(auth_file)
+        _log(f"auth reset: removed {auth_file}.")
+        _log("next launch will prompt you to create an account again.")
+    else:
+        _log(f"no auth file at {auth_file}; nothing to reset.")
+
+
 def main() -> None:
+    if "--reset-auth" in sys.argv[1:]:
+        _reset_auth()
+        return
+
     host, port = _prepare_environment()
     _log(f"data dir: {os.environ['ODYSSEUS_DATA_DIR']}")
     _log(f"starting backend on http://{host}:{port} ...")

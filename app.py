@@ -889,6 +889,18 @@ async def get_version():
 async def health_check() -> Dict[str, str]:
     return {"status": "healthy", "timestamp": datetime.now(timezone.utc).isoformat()}
 
+@app.post("/api/app/quit")
+async def quit_app() -> Dict[str, str]:
+    import threading
+    import time
+
+    def _shutdown():
+        time.sleep(0.3)
+        os._exit(0)
+
+    threading.Thread(target=_shutdown, daemon=True).start()
+    return {"status": "shutting down"}
+
 @app.get("/api/ready")
 async def readiness_check() -> JSONResponse:
     """Readiness / integrity self-check — DB, data dir, local-first storage.

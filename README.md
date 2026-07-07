@@ -56,9 +56,13 @@ macOS and Windows need nothing extra — the webview ships with the OS.
 - The terminal you launched from **is** the app process and shows its log.
   **Keep that window open** while you use Illiad.
 - **Closing the app window quits everything** — backend included. No tray icon,
-  no background process left running.
+  no background process left running. You can also quit from inside the app with
+  the **power button** at the bottom of the icon rail.
 - Your data (SQLite, caches, vector store) lives in a per-user folder and
   persists across runs. Override it with `ODYSSEUS_DATA_DIR`.
+- **Forgot your password?** There's no email reset on a local app. Run
+  `uv run illiad_launcher.py --reset-auth` to clear the saved account; the next
+  launch prompts you to create one again. (Your chats and data are untouched.)
 
 ## Configuration
 

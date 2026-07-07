@@ -2285,6 +2285,15 @@ function initAccount() {
     render2FA();
   }
 
+  // Quit app
+  const quitBtn = el('rail-quit');
+  if (quitBtn) {
+    quitBtn.addEventListener('click', async () => {
+      if (!window.confirm('Quit Illiad? This closes the app and stops the backend.')) return;
+      try { await fetch('/api/app/quit', { method: 'POST' }); } catch (_) {}
+    });
+  }
+
   // Logout
   const logoutBtn = el('settings-logout-btn');
   if (logoutBtn) {
